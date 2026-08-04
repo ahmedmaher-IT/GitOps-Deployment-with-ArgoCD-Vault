@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-app
+  namespace: sample-app
+  labels:
+    app: sample-app
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5   # keep old ReplicaSets around so `kubectl rollout undo` works
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: sample-app
+  template:
+    metadata:
+      labels:
+        app: sample-app
+      annotations:
+        # Vault Agent Injector: adds a sidecar that authenticates via the
+        # sample-app-sa service account and writes secrets to a shared volume.
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "sample-app"
+        vault.hashicorp.com/agent-inject-secret-config: "secret/data/sample-app/config"
+        vault.hashicorp.com/agent-inject-template-config: |
+          {{- with secret "secret/data/sample-app/config" -}}
+          DB_PASSWORD={{ .Data.data.db_password }}
+          API_KEY={{ .Data.data.api_key }}
+          {{- end -}}
+    spec:
+      serviceAccountName: sample-app-sa
+      containers:
+        - name: sample-app
+          image: nginxdemos/hello:latest
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi

@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sample-app
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    # Replace with this repo's actual GitHub URL once pushed.
+    repoURL: https://github.com/ahmedmaher-IT/gitops-argocd-vault-eks.git
+    targetRevision: main
+    path: apps/sample-app
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sample-app
+
+  syncPolicy:
+    automated:
+      prune: true       # remove resources deleted from Git
+      selfHeal: true     # revert manual cluster drift back to Git state
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m
+
+  # ArgoCD keeps sync history; a failed sync (e.g. bad rollout, failed
+  # readiness probe) can be rolled back to the last healthy revision with:
+  #   argocd app rollback sample-app <REVISION_ID>
+  # Combined with selfHeal + retry above, drifted/failed syncs are retried
+  # automatically before manual rollback is ever needed.

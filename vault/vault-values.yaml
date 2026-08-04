@@ -1,0 +1,28 @@
+# Helm values for the official HashiCorp Vault chart.
+# Install with:
+#   helm repo add hashicorp https://helm.releases.hashicorp.com
+#   helm install vault hashicorp/vault -n vault --create-namespace -f vault-values.yaml
+#
+# Dev-mode is used here for a portfolio/demo cluster (see production note below).
+
+injector:
+  enabled: true
+
+server:
+  # Dev mode: in-memory, auto-unsealed, root token = "root".
+  # NOT for production — see note below for the production alternative.
+  dev:
+    enabled: true
+    devRootToken: "root"
+
+  standalone:
+    enabled: false
+
+  dataStorage:
+    enabled: true
+    size: 2Gi
+
+# Production note (not deployed here, documented for honesty about scope):
+# a real deployment would disable `dev.enabled`, enable `standalone` or `ha`
+# with a Raft or Consul storage backend, run `vault operator init`, store
+# the unseal keys securely, and unseal manually or via auto-unseal (KMS).
