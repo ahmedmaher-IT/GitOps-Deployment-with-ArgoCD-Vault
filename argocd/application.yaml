@@ -10,7 +10,7 @@ spec:
 
   source:
     # Replace with this repo's actual GitHub URL once pushed.
-    repoURL: https://github.com/ahmedmaher-IT/gitops-argocd-vault-eks.git
+    repoURL: https://github.com/ahmedmaher-IT/GitOps-Deployment-with-ArgoCD-Vault.git
     targetRevision: main
     path: apps/sample-app
 
