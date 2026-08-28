@@ -1,3 +1,6 @@
+<img width="1912" height="907" alt="Screenshot 2026-08-28 230459" src="https://github.com/user-attachments/assets/c820da83-f351-4290-9aaa-700044130797" />
+<img width="1470" height="521" alt="Screenshot 2026-08-28 230211" src="https://github.com/user-attachments/assets/c76e016c-c02d-4c82-9b0e-5267e4057af9" />
+<img width="1918" height="922" alt="Screenshot 2026-08-28 225726" src="https://github.com/user-attachments/assets/cc49b26e-ca8c-4eae-bffc-994de0c0d147" />
 # GitOps Deployment with ArgoCD & Vault
 
 A GitOps pipeline on a local Kubernetes cluster (minikube) where **Git is
